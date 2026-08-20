@@ -20,6 +20,8 @@
   --muted: #6b7280;
   --accent: #4f46e5;
   --accent-dim: rgba(79, 70, 229, 0.1);
+  --accent-fg: #ffffff; /* text/icon color sitting on an --accent background */
+  --danger: #ef4444;
 
   --stage-planned: #3b82f6;
   --stage-in_progress: #eab308;
@@ -432,7 +434,7 @@ button { font-family: inherit; }
   transition: all 0.15s;
 }
 .priority-btn:hover { border-color: var(--accent); }
-.priority-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.priority-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
 
 .color-picker { display: flex; flex-wrap: wrap; gap: 8px; }
 .color-swatch {
@@ -455,16 +457,16 @@ button { font-family: inherit; }
   padding: 10px 16px; cursor: pointer; font-family: inherit;
   transition: opacity 0.15s, background 0.15s, border-color 0.15s;
 }
-.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary { background: var(--accent); color: var(--accent-fg); }
 .btn-primary:hover { opacity: 0.9; }
 .btn-secondary { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
 .btn-secondary:hover { background: var(--border); }
 
-.btn-save { flex: 2; background: var(--accent); color: #fff; }
+.btn-save { flex: 2; background: var(--accent); color: var(--accent-fg); }
 .btn-save:hover { opacity: 0.9; }
-.btn-delete { flex: 1; background: transparent; color: #ef4444; border: 1px solid var(--border); }
-.btn-delete:hover { background: rgba(239, 68, 68, 0.08); }
-.btn-delete.confirming { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.4); }
+.btn-delete { flex: 1; background: transparent; color: var(--danger); border: 1px solid var(--border); }
+.btn-delete:hover { background: color-mix(in srgb, var(--danger) 8%, transparent); }
+.btn-delete.confirming { background: color-mix(in srgb, var(--danger) 12%, transparent); border-color: color-mix(in srgb, var(--danger) 40%, transparent); }
 
 .field-label-row {
   display: flex;
@@ -590,6 +592,23 @@ button { font-family: inherit; }
 .settings-actions-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* ── Future dark mode ─────────────────────────────────────────
-   Intentionally left empty for now. When dark mode ships, this
-   is where a `@media (prefers-color-scheme: dark)` /
-   `[data-theme="dark"]` override of the tokens above will go. */
+   Scaffolding only -- both blocks are structurally ready but empty,
+   so shipping dark mode later means filling in token values here,
+   not restructuring the stylesheet or hunting down hardcoded colors
+   (every color used above is one of the tokens on :root).
+
+   - The media query covers a system-level dark preference, unless
+     the user has explicitly chosen light (settings.theme === 'light'
+     would set [data-theme="light"] on <html>).
+   - The attribute selector covers an explicit in-app dark toggle,
+     once one exists (settings.theme === 'dark' -> [data-theme="dark"]
+     on <html>), and wins even if the OS preference is light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* --bg: ...; --surface: ...; --text: ...; etc. */
+  }
+}
+
+:root[data-theme="dark"] {
+  /* --bg: ...; --surface: ...; --text: ...; etc. */
+}
