@@ -6,6 +6,7 @@
 import { getCard, createCard, updateCard, deleteCard, moveCard } from './state.js';
 import { render, parseLocalDate } from './render.js';
 import { initDragAndDrop } from './dragdrop.js';
+import { renderMarkdown } from './markdown.js';
 
 const backdrop = document.getElementById('backdrop');
 const cardModal = document.getElementById('card-modal');
@@ -13,6 +14,8 @@ const cardModalTitle = document.getElementById('card-modal-title');
 const cardModalClose = document.getElementById('card-modal-close');
 const titleInput = document.getElementById('card-title-input');
 const descInput = document.getElementById('card-desc-input');
+const descPreview = document.getElementById('card-desc-preview');
+const mdTabs = document.getElementById('md-tabs');
 const dueInput = document.getElementById('card-due-input');
 const startGroup = document.getElementById('card-start-group');
 const startValue = document.getElementById('card-start-value');
@@ -67,6 +70,28 @@ tagInput.addEventListener('keydown', e => {
   }
 });
 
+// ── Write/Preview tabs ───────────────────────────────────────
+function setDescMode(mode) {
+  for (const btn of mdTabs.querySelectorAll('.md-tab')) {
+    const active = btn.dataset.mode === mode;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-selected', String(active));
+  }
+  if (mode === 'preview') {
+    renderMarkdown(descInput.value, descPreview);
+    descInput.hidden = true;
+    descPreview.hidden = false;
+  } else {
+    descInput.hidden = false;
+    descPreview.hidden = true;
+  }
+}
+
+mdTabs.addEventListener('click', e => {
+  const btn = e.target.closest('.md-tab');
+  if (btn) setDescMode(btn.dataset.mode);
+});
+
 // ── Open/close ───────────────────────────────────────────────
 function openBackdrop() { backdrop.classList.add('open'); }
 function closeBackdrop() { backdrop.classList.remove('open'); }
@@ -78,6 +103,7 @@ function openCardModal({ card = null, projectId = null, status = null } = {}) {
   cardModalTitle.textContent = card ? 'Edit Card' : 'New Card';
   titleInput.value = card?.title || '';
   descInput.value = card?.description || '';
+  setDescMode('write');
   dueInput.value = card?.dueDate ? card.dueDate.slice(0, 10) : '';
   tags = card?.tags ? [...card.tags] : [];
   renderTagChips();

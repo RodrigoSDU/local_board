@@ -5,6 +5,7 @@
 // with no user input in them.
 
 import { getProjects, getCardsForCell, STAGES } from './state.js';
+import { renderMarkdown } from './markdown.js';
 
 const projectListEl = document.getElementById('project-list');
 const emptyStateEl = document.getElementById('empty-state');
@@ -42,9 +43,9 @@ function buildCard(card) {
   el.appendChild(title);
 
   if (card.description) {
-    const desc = document.createElement('p');
+    const desc = document.createElement('div');
     desc.className = 'card-desc';
-    desc.textContent = card.description;
+    renderMarkdown(card.description, desc);
     el.appendChild(desc);
   }
 
