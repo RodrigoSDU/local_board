@@ -55,7 +55,7 @@ function buildChecklistDisplay(items) {
 
 function buildCard(card) {
   const el = document.createElement('article');
-  el.className = 'card';
+  el.className = `card stage-${card.status}`;
   el.dataset.id = card.id;
 
   const title = document.createElement('h3');
@@ -137,7 +137,7 @@ function buildAddCardButton(projectId, status) {
 // not just the same width.
 function buildStackChip(card) {
   const el = document.createElement('div');
-  el.className = 'card stack-chip';
+  el.className = `card stack-chip stage-${card.status}`;
   el.dataset.id = card.id;
   const title = document.createElement('span');
   title.className = 'card-title';

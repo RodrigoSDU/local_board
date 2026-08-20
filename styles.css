@@ -248,6 +248,7 @@ button { font-family: inherit; }
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
+  border-left-width: 3px; /* stage indicator -- same treatment as .column-header's left border, same tokens */
   border-radius: var(--radius);
   padding: 10px 12px;
   display: flex;
@@ -259,6 +260,11 @@ button { font-family: inherit; }
   user-select: none;
   -webkit-touch-callout: none; /* iPad long-press would otherwise show a text-selection callout mid-drag */
 }
+
+.card.stage-planned     { border-left-color: var(--stage-planned); }
+.card.stage-in_progress { border-left-color: var(--stage-in_progress); }
+.card.stage-blocked     { border-left-color: var(--stage-blocked); }
+.card.stage-done        { border-left-color: var(--stage-done); }
 
 .card.drag-source {
   opacity: 0;
