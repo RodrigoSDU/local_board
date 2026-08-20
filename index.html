@@ -28,102 +28,15 @@
   </div>
 
   <main class="board" id="board">
-
-    <!-- Sample project row (placeholder content for layout verification) -->
-    <section class="project-row" style="--row-color:#3b82f6">
-      <div class="project-row-header">
-        <button class="collapse-btn" title="Collapse" aria-label="Collapse project">
-          <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2 4.5l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <span class="project-name">Website Redesign</span>
-        <span class="priority-dots" title="Priority 4 of 5">
-          <span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span>
-        </span>
-        <span class="due-chip">Due Sep 12</span>
-        <button class="icon-btn small" title="Edit project" aria-label="Edit project">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-        </button>
-      </div>
-      <div class="project-row-body">
-        <div class="cell" data-stage="planned">
-          <article class="card">
-            <h3 class="card-title">Wireframe homepage</h3>
-            <p class="card-desc">Sketch layout for hero, features, and footer sections.</p>
-            <div class="card-tags"><span class="tag">design</span></div>
-            <div class="card-meta"><span class="card-start">Started Aug 18</span></div>
-          </article>
-          <article class="card">
-            <h3 class="card-title">Collect brand assets</h3>
-            <div class="card-meta"><span class="card-start">Started Aug 19</span><span class="due-chip small">Due Aug 25</span></div>
-          </article>
-        </div>
-        <div class="cell" data-stage="in_progress">
-          <article class="card">
-            <h3 class="card-title">Build component library</h3>
-            <p class="card-desc">Buttons, inputs, cards, and modals in the new style.</p>
-            <div class="card-tags"><span class="tag">dev</span><span class="tag">ui</span></div>
-            <div class="card-meta"><span class="card-start">Started Aug 15</span><span class="due-chip small">Due Aug 30</span></div>
-          </article>
-        </div>
-        <div class="cell" data-stage="blocked">
-          <article class="card">
-            <h3 class="card-title">Await client copy</h3>
-            <p class="card-desc">Blocked on final marketing copy for the landing page.</p>
-            <div class="card-meta"><span class="card-start">Started Aug 10</span></div>
-          </article>
-        </div>
-        <div class="cell" data-stage="done">
-          <article class="card">
-            <h3 class="card-title">Kickoff meeting</h3>
-            <div class="card-meta"><span class="card-start">Started Aug 1</span></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sample project row 2 -->
-    <section class="project-row" style="--row-color:#f97316">
-      <div class="project-row-header">
-        <button class="collapse-btn" title="Collapse" aria-label="Collapse project">
-          <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2 4.5l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <span class="project-name">Mobile App Beta</span>
-        <span class="priority-dots" title="Priority 2 of 5">
-          <span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </span>
-        <span class="due-chip">Due Oct 1</span>
-        <button class="icon-btn small" title="Edit project" aria-label="Edit project">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-        </button>
-      </div>
-      <div class="project-row-body">
-        <div class="cell" data-stage="planned">
-          <article class="card">
-            <h3 class="card-title">Push notification spec</h3>
-            <div class="card-meta"><span class="card-start">Started Aug 20</span></div>
-          </article>
-        </div>
-        <div class="cell" data-stage="in_progress"></div>
-        <div class="cell" data-stage="blocked"></div>
-        <div class="cell" data-stage="done">
-          <article class="card">
-            <h3 class="card-title">Set up CI pipeline</h3>
-            <div class="card-meta"><span class="card-start">Started Aug 5</span></div>
-          </article>
-          <article class="card">
-            <h3 class="card-title">App icon design</h3>
-            <div class="card-meta"><span class="card-start">Started Aug 3</span></div>
-          </article>
-        </div>
-      </div>
-    </section>
+    <div class="project-list" id="project-list"></div>
 
     <!-- Empty state, shown when there are no projects -->
-    <div class="empty-state" hidden>
+    <div class="empty-state" id="empty-state" hidden>
       <p>No projects yet.</p>
       <p class="empty-state-sub">Use the gear icon to add your first project.</p>
     </div>
-
   </main>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
