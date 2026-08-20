@@ -9,6 +9,7 @@ const KEYS = {
 
 const DEFAULT_SETTINGS = {
   theme: 'light',
+  seeded: false, // whether the first-run sample projects have ever been created
 };
 
 function readJSON(key, fallback) {

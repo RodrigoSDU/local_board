@@ -1,11 +1,17 @@
-import { init, getProjects, createProject, createCard } from './state.js';
+import { init, createProject, createCard } from './state.js';
+import { loadSettings, saveSettings } from './storage.js';
 import { render } from './render.js';
 import './settings.js';
+import './cards.js';
 
 // First-run only: gives the board something to look at instead of the
-// empty state. Once a real project exists this never runs again.
+// empty state. Runs exactly once ever, tracked via settings.seeded --
+// not "projects.length === 0", so deleting every project later doesn't
+// bring the sample data back on the next reload.
 function seedSampleDataIfEmpty() {
-  if (getProjects().length > 0) return;
+  const settings = loadSettings();
+  if (settings.seeded) return;
+  saveSettings({ ...settings, seeded: true });
 
   const site = createProject({
     name: 'Website Redesign',

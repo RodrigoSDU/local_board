@@ -1,6 +1,12 @@
 /* ── Reset ────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Any element toggled via the `hidden` attribute must actually hide, even
+   when it also has a class that sets `display` (e.g. flex/grid) -- the
+   attribute and the class selector have equal specificity, so without this
+   the later-declared class rule silently wins and `hidden` does nothing. */
+[hidden] { display: none !important; }
+
 /* ── Theme tokens ─────────────────────────────────────────────
    Light theme values live directly on :root. A future dark theme
    only needs to add override blocks here (prefers-color-scheme /
@@ -206,7 +212,26 @@ button { font-family: inherit; }
   flex-direction: column;
   gap: 6px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-  cursor: grab;
+  cursor: pointer;
+}
+
+.add-card-btn {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.add-card-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
 }
 
 .card-title {
@@ -258,8 +283,6 @@ button { font-family: inherit; }
   color: var(--muted);
   text-align: center;
 }
-.empty-state[hidden] { display: none; }
-
 .empty-state-sub {
   font-size: 0.85rem;
   opacity: 0.8;
@@ -372,6 +395,53 @@ button { font-family: inherit; }
 .btn-delete { flex: 1; background: transparent; color: #ef4444; border: 1px solid var(--border); }
 .btn-delete:hover { background: rgba(239, 68, 68, 0.08); }
 .btn-delete.confirming { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.4); }
+
+.static-value {
+  font-size: 0.9rem;
+  color: var(--text);
+  padding: 8px 10px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.tags-wrap {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  transition: border-color 0.15s;
+}
+.tags-wrap:focus-within { border-color: var(--accent); }
+
+.tag-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+.tag-chips:empty { margin-bottom: 0; }
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+.tag-chip-remove {
+  background: none; border: none; color: var(--accent);
+  cursor: pointer; font-size: 1rem; line-height: 1; padding: 0; opacity: 0.7;
+}
+.tag-chip-remove:hover { opacity: 1; }
+
+#card-tag-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  color: var(--text);
+}
 
 .settings-section { display: flex; flex-direction: column; gap: 10px; }
 .settings-section-title {

@@ -11,10 +11,21 @@ const emptyStateEl = document.getElementById('empty-state');
 
 const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
 
-function formatDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? '' : dateFmt.format(d);
+// Reads the calendar date directly out of an ISO date/datetime string and
+// builds a *local* Date from those components -- `new Date('2026-09-05')`
+// parses as UTC midnight, which formatters then render as the previous day
+// in any timezone behind UTC. Due dates are calendar dates the user picked,
+// not instants, so they must never shift with the viewer's timezone.
+export function parseLocalDate(iso) {
+  if (!iso) return null;
+  const [year, month, day] = iso.slice(0, 10).split('-').map(Number);
+  if (!year || !month || !day) return null;
+  return new Date(year, month - 1, day);
+}
+
+export function formatDate(iso) {
+  const d = parseLocalDate(iso);
+  return d ? dateFmt.format(d) : '';
 }
 
 const CHEVRON_SVG = '<svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2 4.5l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -78,6 +89,16 @@ function buildPriorityDots(priority) {
   return wrap;
 }
 
+function buildAddCardButton(projectId, status) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'add-card-btn';
+  btn.dataset.projectId = projectId;
+  btn.dataset.status = status;
+  btn.textContent = '+ Add card';
+  return btn;
+}
+
 function buildProjectRow(project) {
   const section = document.createElement('section');
   section.className = 'project-row';
@@ -126,6 +147,7 @@ function buildProjectRow(project) {
     for (const card of getCardsForCell(project.id, stage.key)) {
       cell.appendChild(buildCard(card));
     }
+    cell.appendChild(buildAddCardButton(project.id, stage.key));
     body.appendChild(cell);
   }
   section.appendChild(body);

@@ -101,6 +101,44 @@
     </div>
   </div>
 
+  <div class="modal" id="card-modal" role="dialog" aria-modal="true" aria-labelledby="card-modal-title">
+    <div class="modal-header">
+      <h2 id="card-modal-title">New Card</h2>
+      <button class="modal-close-btn" id="card-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label" for="card-title-input">Title</label>
+        <input type="text" id="card-title-input" placeholder="Card title" maxlength="120" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="card-desc-input">Description <span class="optional">optional</span></label>
+        <textarea id="card-desc-input" rows="4" placeholder="Notes, details..." maxlength="4000"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label" for="card-due-input">Due date <span class="optional">optional</span></label>
+          <input type="date" id="card-due-input" />
+        </div>
+        <div class="field-group" id="card-start-group">
+          <label class="field-label">Started</label>
+          <div class="static-value" id="card-start-value">—</div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="card-tag-input">Tags <span class="optional">optional</span></label>
+        <div class="tags-wrap" id="card-tags-wrap">
+          <div class="tag-chips" id="card-tag-chips"></div>
+          <input type="text" id="card-tag-input" placeholder="Add a tag and press Enter" maxlength="24" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-delete" id="card-delete-btn" hidden>Delete</button>
+      <button class="btn-save" id="card-save-btn">Save</button>
+    </div>
+  </div>
+
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
