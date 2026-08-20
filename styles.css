@@ -265,6 +265,121 @@ button { font-family: inherit; }
   opacity: 0.8;
 }
 
+/* ── Backdrop & modals ────────────────────────────────────── */
+.backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 50;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+.backdrop.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -48%);
+  width: 92%;
+  max-width: 440px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+  z-index: 51;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.modal.open { opacity: 1; pointer-events: all; transform: translate(-50%, -50%); }
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header h2 { font-size: 1.05rem; font-weight: 700; }
+
+.modal-close-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: var(--surface-alt); color: var(--muted);
+  font-size: 1.1rem; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close-btn:hover { color: var(--text); }
+
+.modal-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 16px; }
+
+.field-row { display: flex; gap: 14px; }
+.field-row .field-group { flex: 1; }
+
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-label {
+  font-size: 0.76rem; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.field-label .optional { font-weight: 400; text-transform: none; letter-spacing: 0; opacity: 0.7; }
+
+.field-group input[type="text"],
+.field-group input[type="date"],
+.field-group textarea {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 10px; font-size: 0.9rem; font-family: inherit;
+  color: var(--text); background: var(--surface);
+  outline: none; transition: border-color 0.15s;
+}
+.field-group input:focus, .field-group textarea:focus { border-color: var(--accent); }
+.field-group textarea { resize: vertical; }
+
+.priority-picker { display: flex; gap: 4px; }
+.priority-btn {
+  flex: 1; height: 34px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--muted);
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  transition: all 0.15s;
+}
+.priority-btn:hover { border-color: var(--accent); }
+.priority-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.color-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.color-swatch {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2.5px solid transparent; cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+  transition: transform 0.12s, border-color 0.12s;
+}
+.color-swatch:hover { transform: scale(1.12); }
+.color-swatch.active { border-color: var(--text); }
+
+.modal-actions {
+  display: flex; gap: 10px;
+  padding: 14px 20px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-primary, .btn-secondary, .btn-save, .btn-delete {
+  border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+  padding: 10px 16px; cursor: pointer; font-family: inherit;
+  transition: opacity 0.15s, background 0.15s, border-color 0.15s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { opacity: 0.9; }
+.btn-secondary { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--border); }
+
+.btn-save { flex: 2; background: var(--accent); color: #fff; }
+.btn-save:hover { opacity: 0.9; }
+.btn-delete { flex: 1; background: transparent; color: #ef4444; border: 1px solid var(--border); }
+.btn-delete:hover { background: rgba(239, 68, 68, 0.08); }
+.btn-delete.confirming { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.4); }
+
+.settings-section { display: flex; flex-direction: column; gap: 10px; }
+.settings-section-title {
+  font-size: 0.78rem; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.settings-actions-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
 /* ── Future dark mode ─────────────────────────────────────────
    Intentionally left empty for now. When dark mode ships, this
    is where a `@media (prefers-color-scheme: dark)` /

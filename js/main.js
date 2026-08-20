@@ -1,5 +1,6 @@
 import { init, getProjects, createProject, createCard } from './state.js';
 import { render } from './render.js';
+import './settings.js';
 
 // First-run only: gives the board something to look at instead of the
 // empty state. Once a real project exists this never runs again.

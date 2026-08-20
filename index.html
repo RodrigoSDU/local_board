@@ -37,6 +37,70 @@
     </div>
   </main>
 
+  <div class="backdrop" id="backdrop"></div>
+
+  <div class="modal" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal-header">
+      <h2 id="settings-modal-title">Settings</h2>
+      <button class="modal-close-btn" id="settings-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <section class="settings-section">
+        <h3 class="settings-section-title">Projects</h3>
+        <button class="btn-primary" id="new-project-btn">+ New Project</button>
+      </section>
+      <section class="settings-section">
+        <h3 class="settings-section-title">Data</h3>
+        <div class="settings-actions-row">
+          <button class="btn-secondary" id="export-btn">Export backup</button>
+          <button class="btn-secondary" id="import-btn">Import backup</button>
+        </div>
+        <input type="file" id="import-file" accept="application/json" hidden />
+      </section>
+    </div>
+  </div>
+
+  <div class="modal" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+    <div class="modal-header">
+      <h2 id="project-modal-title">New Project</h2>
+      <button class="modal-close-btn" id="project-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label" for="project-name-input">Name</label>
+        <input type="text" id="project-name-input" placeholder="Project name" maxlength="80" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="project-summary-input">Summary <span class="optional">optional</span></label>
+        <textarea id="project-summary-input" rows="2" placeholder="What is this project about?" maxlength="400"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label" for="project-due-input">Due date <span class="optional">optional</span></label>
+          <input type="date" id="project-due-input" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" id="priority-label">Priority</label>
+          <div class="priority-picker" id="priority-picker" role="group" aria-labelledby="priority-label">
+            <button type="button" class="priority-btn" data-value="1">1</button>
+            <button type="button" class="priority-btn" data-value="2">2</button>
+            <button type="button" class="priority-btn" data-value="3">3</button>
+            <button type="button" class="priority-btn" data-value="4">4</button>
+            <button type="button" class="priority-btn" data-value="5">5</button>
+          </div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" id="color-label">Color</label>
+        <div class="color-picker" id="color-picker" role="group" aria-labelledby="color-label"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-delete" id="project-delete-btn" hidden>Delete</button>
+      <button class="btn-save" id="project-save-btn">Save</button>
+    </div>
+  </div>
+
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
