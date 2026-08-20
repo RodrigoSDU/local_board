@@ -20,6 +20,7 @@ const MOVE_THRESHOLD_PX = 6;
 export function initDragAndDrop({ container, onDrop }) {
   container.addEventListener('pointerdown', e => {
     if (e.button !== 0) return; // primary mouse button / touch / pen only
+    if (e.target.closest('input, button, a, textarea, select')) return; // let interactive sub-elements (e.g. checklist checkboxes) handle their own clicks
     const cardEl = e.target.closest('.card');
     if (!cardEl) return;
     beginPress(e, cardEl, onDrop);

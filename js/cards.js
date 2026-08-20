@@ -220,7 +220,22 @@ deleteBtn.addEventListener('click', () => {
   render();
 });
 
-// "+ Add card" buttons and clicking an existing card both open this modal.
+// Flips one checklist item's done state and persists it. Used by both the
+// board card (here) and the edit modal (renderChecklist above) -- the
+// modal keeps its own in-progress copy until Save, so this only touches
+// state.js directly for the board's already-saved cards.
+function toggleChecklistItem(cardId, itemId) {
+  const card = getCard(cardId);
+  if (!card) return;
+  const checklist = card.checklist.map(item => (item.id === itemId ? { ...item, done: !item.done } : item));
+  updateCard(cardId, { checklist });
+  render();
+}
+
+// "+ Add card" buttons, checklist checkboxes, and clicking a card's body
+// all share this one delegated listener. Order matters: the checklist
+// check must come before the generic "open the edit modal" fallback,
+// since a checklist item is itself inside a .card.
 const projectListEl = document.getElementById('project-list');
 projectListEl.addEventListener('click', e => {
   const addBtn = e.target.closest('.add-card-btn');
@@ -228,6 +243,15 @@ projectListEl.addEventListener('click', e => {
     openCardModal({ projectId: addBtn.dataset.projectId, status: addBtn.dataset.status });
     return;
   }
+
+  const checklistItemEl = e.target.closest('.card-checklist-item');
+  if (checklistItemEl) {
+    e.preventDefault(); // skip the checkbox's own native toggle; the re-render below is the single source of truth
+    const cardEl = e.target.closest('.card');
+    toggleChecklistItem(cardEl.dataset.id, checklistItemEl.dataset.itemId);
+    return;
+  }
+
   const cardEl = e.target.closest('.card');
   if (cardEl) {
     const card = getCard(cardEl.dataset.id);

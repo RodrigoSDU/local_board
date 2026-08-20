@@ -512,7 +512,10 @@ button { font-family: inherit; }
   align-items: center;
   gap: 6px;
   font-size: 0.78rem;
+  cursor: pointer;
+  border-radius: 4px;
 }
+.card-checklist-item:hover { background: var(--surface-alt); }
 .card-checklist-item input[type="checkbox"] { accent-color: var(--accent); flex-shrink: 0; }
 .card-checklist-item.done span { text-decoration: line-through; color: var(--muted); }
 

@@ -31,18 +31,19 @@ export function formatDate(iso) {
 const CHEVRON_SVG = '<svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2 4.5l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const PENCIL_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
 
-// Read-only checklist for the compact board card -- toggling only happens
-// in the edit modal, same as every other card field.
+// Checklist shown on the compact board card. Toggleable directly here (via
+// cards.js's delegated click handler, keyed off data-item-id) as well as
+// from the card's own edit modal -- both act on the same card.checklist.
 function buildChecklistDisplay(items) {
   const list = document.createElement('div');
   list.className = 'card-checklist';
   for (const item of items) {
     const row = document.createElement('div');
     row.className = 'card-checklist-item' + (item.done ? ' done' : '');
+    row.dataset.itemId = item.id;
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = item.done;
-    checkbox.disabled = true;
     row.appendChild(checkbox);
     const text = document.createElement('span');
     text.textContent = item.text;
