@@ -28,6 +28,21 @@ export function formatDate(iso) {
   return d ? dateFmt.format(d) : '';
 }
 
+function isOverdue(dueIso) {
+  const due = parseLocalDate(dueIso);
+  if (!due) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return due.getTime() < today.getTime();
+}
+
+// Prefixes an alert emoji onto a title when it's overdue -- plain text,
+// same as everything else here, so it stays through textContent with no
+// extra markup.
+function withAlert(text, overdue) {
+  return overdue ? `⚠️ ${text}` : text;
+}
+
 const CHEVRON_SVG = '<svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2 4.5l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const PENCIL_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
 
@@ -58,9 +73,13 @@ function buildCard(card) {
   el.className = `card stage-${card.status}`;
   el.dataset.id = card.id;
 
+  // A finished card doesn't need an overdue warning -- it doesn't matter
+  // anymore that it would have been late.
+  const cardOverdue = card.status !== 'done' && isOverdue(card.dueDate);
+
   const title = document.createElement('h3');
   title.className = 'card-title';
-  title.textContent = card.title;
+  title.textContent = withAlert(card.title, cardOverdue);
   el.appendChild(title);
 
   if (card.description) {
@@ -94,7 +113,7 @@ function buildCard(card) {
   meta.appendChild(start);
   if (card.dueDate) {
     const due = document.createElement('span');
-    due.className = 'due-chip small';
+    due.className = 'due-chip small' + (cardOverdue ? ' overdue' : '');
     due.textContent = `Due ${formatDate(card.dueDate)}`;
     meta.appendChild(due);
   }
@@ -125,23 +144,18 @@ function buildAddCardButton(projectId, status) {
   return btn;
 }
 
-// Cards stay in the DOM (never disappear) when a project is collapsed --
-// they're just visually stacked into a fanned pile instead of laid out in
-// the 4-column grid. The pile doubles as a drop target: dropping a card
-// here moves it into this project's "planned" stage, since a collapsed
-// row has no visible column to pick a more specific one from.
-// A compact stand-in for a full card: title only, fixed height matching
-// the pile container exactly. The pile's height is fixed, so a full
-// buildCard() (title+description+tags+meta) would overflow it and spill
-// into the row below -- the pile needs every chip to be the same height,
-// not just the same width.
+// A compact stand-in for a full card in the collapsed stack view: title
+// only, fixed height matching the pile container exactly. The pile's
+// height is fixed, so a full buildCard() (title+description+tags+meta)
+// would overflow it and spill into the row below -- every chip needs to
+// be the same height, not just the same width.
 function buildStackChip(card) {
   const el = document.createElement('div');
   el.className = `card stack-chip stage-${card.status}`;
   el.dataset.id = card.id;
   const title = document.createElement('span');
   title.className = 'card-title';
-  title.textContent = card.title;
+  title.textContent = withAlert(card.title, card.status !== 'done' && isOverdue(card.dueDate));
   el.appendChild(title);
   return el;
 }
@@ -203,16 +217,18 @@ function buildProjectRow(project) {
   collapseBtn.innerHTML = CHEVRON_SVG;
   header.appendChild(collapseBtn);
 
+  const projectOverdue = isOverdue(project.dueDate);
+
   const name = document.createElement('span');
   name.className = 'project-name';
-  name.textContent = project.name;
+  name.textContent = withAlert(project.name, projectOverdue);
   header.appendChild(name);
 
   header.appendChild(buildPriorityDots(project.priority));
 
   if (project.dueDate) {
     const due = document.createElement('span');
-    due.className = 'due-chip';
+    due.className = 'due-chip' + (projectOverdue ? ' overdue' : '');
     due.textContent = `Due ${formatDate(project.dueDate)}`;
     header.appendChild(due);
   }

@@ -179,6 +179,11 @@ button { font-family: inherit; }
   white-space: nowrap;
 }
 .due-chip.small { font-size: 0.68rem; padding: 1px 7px; }
+.due-chip.overdue {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+}
 
 .collapse-btn {
   display: flex; align-items: center; justify-content: center;
