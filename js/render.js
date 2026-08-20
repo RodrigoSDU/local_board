@@ -4,7 +4,7 @@
 // markup. The two innerHTML uses below are fixed, hardcoded icon strings
 // with no user input in them.
 
-import { getProjects, getCardsForCell, STAGES } from './state.js';
+import { getProjects, getCardsForCell, getCardsForProject, STAGES } from './state.js';
 import { renderMarkdown } from './markdown.js';
 
 const projectListEl = document.getElementById('project-list');
@@ -100,9 +100,59 @@ function buildAddCardButton(projectId, status) {
   return btn;
 }
 
+// Cards stay in the DOM (never disappear) when a project is collapsed --
+// they're just visually stacked into a fanned pile instead of laid out in
+// the 4-column grid. The pile doubles as a drop target: dropping a card
+// here moves it into this project's "planned" stage, since a collapsed
+// row has no visible column to pick a more specific one from.
+// A compact stand-in for a full card: title only, fixed height matching
+// the pile container exactly. The pile's height is fixed, so a full
+// buildCard() (title+description+tags+meta) would overflow it and spill
+// into the row below -- the pile needs every chip to be the same height,
+// not just the same width.
+function buildStackChip(card) {
+  const el = document.createElement('div');
+  el.className = 'card stack-chip';
+  el.dataset.id = card.id;
+  const title = document.createElement('span');
+  title.className = 'card-title';
+  title.textContent = card.title;
+  el.appendChild(title);
+  return el;
+}
+
+function buildCollapsedStack(project) {
+  const wrap = document.createElement('div');
+  wrap.className = 'project-row-stack';
+
+  const pile = document.createElement('div');
+  pile.className = 'cell stack-pile';
+  pile.dataset.projectId = project.id;
+  pile.dataset.stage = 'planned';
+
+  const cards = getCardsForProject(project.id);
+  const FAN_CAP = 5; // additional cards beyond this just stack directly behind, no extra spread
+  cards.forEach((card, i) => {
+    const chip = buildStackChip(card);
+    const offset = Math.min(i, FAN_CAP);
+    const rotate = offset === 0 ? 0 : (offset % 2 === 0 ? 1 : -1) * offset * 0.7;
+    chip.style.transform = `translate(${offset * 4}px, ${offset * 6}px) rotate(${rotate}deg)`;
+    chip.style.zIndex = String(cards.length - i);
+    pile.appendChild(chip);
+  });
+  wrap.appendChild(pile);
+
+  const badge = document.createElement('span');
+  badge.className = 'stack-badge';
+  badge.textContent = cards.length === 1 ? '1 card' : `${cards.length} cards`;
+  wrap.appendChild(badge);
+
+  return wrap;
+}
+
 function buildProjectRow(project) {
   const section = document.createElement('section');
-  section.className = 'project-row';
+  section.className = 'project-row' + (project.collapsed ? ' collapsed' : '');
   section.dataset.id = project.id;
   section.style.setProperty('--row-color', project.color);
 
@@ -111,8 +161,8 @@ function buildProjectRow(project) {
 
   const collapseBtn = document.createElement('button');
   collapseBtn.className = 'collapse-btn';
-  collapseBtn.title = 'Collapse';
-  collapseBtn.setAttribute('aria-label', 'Collapse project');
+  collapseBtn.title = project.collapsed ? 'Expand' : 'Collapse';
+  collapseBtn.setAttribute('aria-label', project.collapsed ? 'Expand project' : 'Collapse project');
   collapseBtn.innerHTML = CHEVRON_SVG;
   header.appendChild(collapseBtn);
 
@@ -138,6 +188,11 @@ function buildProjectRow(project) {
   header.appendChild(editBtn);
 
   section.appendChild(header);
+
+  if (project.collapsed) {
+    section.appendChild(buildCollapsedStack(project));
+    return section;
+  }
 
   const body = document.createElement('div');
   body.className = 'project-row-body';

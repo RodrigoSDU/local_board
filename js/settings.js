@@ -172,13 +172,20 @@ deleteBtn.addEventListener('click', () => {
   render();
 });
 
-// Each project row's pencil button opens it in edit mode.
+// Each project row's pencil button opens it in edit mode; its chevron
+// toggles the collapsed/expanded stacked view.
 document.getElementById('project-list').addEventListener('click', e => {
-  const editBtn = e.target.closest('.icon-btn.small');
-  if (!editBtn) return;
   const row = e.target.closest('.project-row');
+  if (!row) return;
   const project = getProject(row.dataset.id);
-  if (project) openProjectModal(project);
+  if (!project) return;
+
+  if (e.target.closest('.icon-btn.small')) {
+    openProjectModal(project);
+  } else if (e.target.closest('.collapse-btn')) {
+    updateProject(project.id, { collapsed: !project.collapsed });
+    render();
+  }
 });
 
 // ── Export / import ──────────────────────────────────────────

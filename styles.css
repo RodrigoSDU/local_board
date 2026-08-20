@@ -186,6 +186,46 @@ button { font-family: inherit; }
 }
 .collapse-btn:hover { background: var(--surface-alt); color: var(--text); }
 .collapse-btn svg { transition: transform 0.2s; }
+.project-row.collapsed .collapse-btn svg { transform: rotate(-90deg); }
+
+/* ── Collapsed stack view ─────────────────────────────────── */
+.project-row-stack {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 4px;
+  min-height: 66px;
+}
+
+.stack-pile {
+  position: relative;
+  width: 260px;
+  height: 58px;
+  flex-shrink: 0;
+}
+
+.stack-pile .card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.stack-pile .card .card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stack-badge {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
 
 /* ── Row body: 4-column grid, all cards visible (row grows) ──*/
 .project-row-body {
