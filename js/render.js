@@ -143,6 +143,7 @@ function buildProjectRow(project) {
   for (const stage of STAGES) {
     const cell = document.createElement('div');
     cell.className = 'cell';
+    cell.dataset.projectId = project.id;
     cell.dataset.stage = stage.key;
     for (const card of getCardsForCell(project.id, stage.key)) {
       cell.appendChild(buildCard(card));

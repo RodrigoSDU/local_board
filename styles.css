@@ -212,7 +212,37 @@ button { font-family: inherit; }
   flex-direction: column;
   gap: 6px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-  cursor: pointer;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none; /* iPad long-press would otherwise show a text-selection callout mid-drag */
+}
+
+.card.drag-source {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-ghost {
+  z-index: 999;
+  pointer-events: none;
+  cursor: grabbing;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.28);
+  transform: scale(1.03) rotate(1deg);
+}
+
+.cell.drag-over {
+  background: var(--accent-dim);
+  outline: 2px dashed var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--radius);
+}
+
+.card-drop-placeholder {
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-dim);
+  pointer-events: none;
 }
 
 .add-card-btn {

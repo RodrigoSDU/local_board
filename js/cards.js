@@ -3,8 +3,9 @@
 // modal pattern; kept separate since projects and cards are different
 // concerns with their own delete-confirm state.
 
-import { getCard, createCard, updateCard, deleteCard } from './state.js';
+import { getCard, createCard, updateCard, deleteCard, moveCard } from './state.js';
 import { render, parseLocalDate } from './render.js';
+import { initDragAndDrop } from './dragdrop.js';
 
 const backdrop = document.getElementById('backdrop');
 const cardModal = document.getElementById('card-modal');
@@ -164,7 +165,8 @@ deleteBtn.addEventListener('click', () => {
 });
 
 // "+ Add card" buttons and clicking an existing card both open this modal.
-document.getElementById('project-list').addEventListener('click', e => {
+const projectListEl = document.getElementById('project-list');
+projectListEl.addEventListener('click', e => {
   const addBtn = e.target.closest('.add-card-btn');
   if (addBtn) {
     openCardModal({ projectId: addBtn.dataset.projectId, status: addBtn.dataset.status });
@@ -175,4 +177,30 @@ document.getElementById('project-list').addEventListener('click', e => {
     const card = getCard(cardEl.dataset.id);
     if (card) openCardModal({ card });
   }
+});
+
+// ── Drag-and-drop ────────────────────────────────────────────
+// After a drop, the destination cell's DOM order (which now includes the
+// moved card at its live-reparented position) becomes the new source of
+// truth for every card's `order` field in that cell. Only the moved card's
+// projectId/status actually change; the rest just get renumbered.
+function commitCellOrder(cell, movedCardId) {
+  const projectId = cell.dataset.projectId;
+  const status = cell.dataset.stage;
+  const ids = [...cell.querySelectorAll('.card')].map(el => el.dataset.id);
+  ids.forEach((id, index) => {
+    if (id === movedCardId) {
+      moveCard(id, { projectId, status, order: index });
+    } else {
+      updateCard(id, { order: index });
+    }
+  });
+}
+
+initDragAndDrop({
+  container: projectListEl,
+  onDrop: ({ cardEl, cell }) => {
+    commitCellOrder(cell, cardEl.dataset.id);
+    render();
+  },
 });
