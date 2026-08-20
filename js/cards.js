@@ -6,7 +6,6 @@
 import { getCard, createCard, updateCard, deleteCard, moveCard } from './state.js';
 import { render, parseLocalDate } from './render.js';
 import { initDragAndDrop } from './dragdrop.js';
-import { renderMarkdown } from './markdown.js';
 
 const backdrop = document.getElementById('backdrop');
 const cardModal = document.getElementById('card-modal');
@@ -14,8 +13,8 @@ const cardModalTitle = document.getElementById('card-modal-title');
 const cardModalClose = document.getElementById('card-modal-close');
 const titleInput = document.getElementById('card-title-input');
 const descInput = document.getElementById('card-desc-input');
-const descPreview = document.getElementById('card-desc-preview');
-const mdTabs = document.getElementById('md-tabs');
+const checklistEditor = document.getElementById('checklist-editor');
+const checklistItemInput = document.getElementById('checklist-item-input');
 const dueInput = document.getElementById('card-due-input');
 const startGroup = document.getElementById('card-start-group');
 const startValue = document.getElementById('card-start-value');
@@ -29,6 +28,7 @@ const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric
 let editingCardId = null; // null => create mode
 let createContext = null; // { projectId, status }, only used in create mode
 let tags = [];
+let checklist = []; // [{ id, text, done }]
 
 function renderTagChips() {
   tagChipsEl.innerHTML = '';
@@ -70,26 +70,53 @@ tagInput.addEventListener('keydown', e => {
   }
 });
 
-// ── Write/Preview tabs ───────────────────────────────────────
-function setDescMode(mode) {
-  for (const btn of mdTabs.querySelectorAll('.md-tab')) {
-    const active = btn.dataset.mode === mode;
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-selected', String(active));
-  }
-  if (mode === 'preview') {
-    renderMarkdown(descInput.value, descPreview);
-    descInput.hidden = true;
-    descPreview.hidden = false;
-  } else {
-    descInput.hidden = false;
-    descPreview.hidden = true;
+// ── Checklist editor ─────────────────────────────────────────
+// Items are add/toggle/remove only -- no in-place text editing -- the
+// same simplification the tag chips above already use.
+function renderChecklist() {
+  checklistEditor.innerHTML = '';
+  for (const item of checklist) {
+    const row = document.createElement('div');
+    row.className = 'checklist-row' + (item.done ? ' done' : '');
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = item.done;
+    checkbox.addEventListener('change', () => {
+      item.done = checkbox.checked;
+      row.classList.toggle('done', item.done);
+    });
+    row.appendChild(checkbox);
+
+    const text = document.createElement('span');
+    text.className = 'checklist-text';
+    text.textContent = item.text;
+    row.appendChild(text);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'checklist-remove';
+    removeBtn.setAttribute('aria-label', `Remove ${item.text}`);
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', () => {
+      checklist = checklist.filter(i => i.id !== item.id);
+      renderChecklist();
+    });
+    row.appendChild(removeBtn);
+
+    checklistEditor.appendChild(row);
   }
 }
 
-mdTabs.addEventListener('click', e => {
-  const btn = e.target.closest('.md-tab');
-  if (btn) setDescMode(btn.dataset.mode);
+checklistItemInput.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const value = checklistItemInput.value.trim();
+  if (value) {
+    checklist.push({ id: crypto.randomUUID(), text: value, done: false });
+    renderChecklist();
+  }
+  checklistItemInput.value = '';
 });
 
 // ── Open/close ───────────────────────────────────────────────
@@ -103,11 +130,13 @@ function openCardModal({ card = null, projectId = null, status = null } = {}) {
   cardModalTitle.textContent = card ? 'Edit Card' : 'New Card';
   titleInput.value = card?.title || '';
   descInput.value = card?.description || '';
-  setDescMode('write');
   dueInput.value = card?.dueDate ? card.dueDate.slice(0, 10) : '';
   tags = card?.tags ? [...card.tags] : [];
   renderTagChips();
   tagInput.value = '';
+  checklist = card?.checklist ? card.checklist.map(item => ({ ...item })) : [];
+  renderChecklist();
+  checklistItemInput.value = '';
 
   if (card) {
     startGroup.hidden = false;
@@ -152,6 +181,7 @@ saveBtn.addEventListener('click', () => {
     description: descInput.value.trim(),
     dueDate: dueInput.value || null,
     tags: [...tags],
+    checklist: checklist.map(item => ({ ...item })),
   };
   if (editingCardId) {
     updateCard(editingCardId, patch);

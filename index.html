@@ -112,15 +112,15 @@
         <input type="text" id="card-title-input" placeholder="Card title" maxlength="120" />
       </div>
       <div class="field-group">
-        <div class="field-label-row">
-          <label class="field-label" for="card-desc-input">Description <span class="optional">optional</span></label>
-          <div class="md-tabs" id="md-tabs" role="tablist" aria-label="Description mode">
-            <button type="button" class="md-tab active" data-mode="write" role="tab" aria-selected="true">Write</button>
-            <button type="button" class="md-tab" data-mode="preview" role="tab" aria-selected="false">Preview</button>
-          </div>
+        <label class="field-label" for="card-desc-input">Description <span class="optional">optional</span></label>
+        <textarea id="card-desc-input" rows="4" placeholder="Notes, details..." maxlength="4000"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="checklist-item-input">Checklist <span class="optional">optional</span></label>
+        <div class="checklist-editor" id="checklist-editor"></div>
+        <div class="checklist-add-row">
+          <input type="text" id="checklist-item-input" placeholder="Add an item and press Enter" maxlength="200" />
         </div>
-        <textarea id="card-desc-input" rows="4" placeholder="Notes, details... supports **bold**, *italic*, - bullets, - [ ] todos" maxlength="4000"></textarea>
-        <div class="md-preview" id="card-desc-preview" hidden></div>
       </div>
       <div class="field-row">
         <div class="field-group">

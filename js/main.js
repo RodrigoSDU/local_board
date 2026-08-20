@@ -20,7 +20,16 @@ function seedSampleDataIfEmpty() {
     priority: 4,
     color: '#3b82f6',
   });
-  createCard({ projectId: site.id, status: 'planned', title: 'Wireframe homepage', description: 'Sketch layout for hero, features, and footer sections.', tags: ['design'] });
+  createCard({
+    projectId: site.id, status: 'planned', title: 'Wireframe homepage',
+    description: 'Sketch layout for hero, features, and footer sections.',
+    tags: ['design'],
+    checklist: [
+      { id: crypto.randomUUID(), text: 'Hero section', done: true },
+      { id: crypto.randomUUID(), text: 'Feature grid', done: false },
+      { id: crypto.randomUUID(), text: 'Footer', done: false },
+    ],
+  });
   createCard({ projectId: site.id, status: 'planned', title: 'Collect brand assets', dueDate: '2026-08-25' });
   createCard({ projectId: site.id, status: 'in_progress', title: 'Build component library', description: 'Buttons, inputs, cards, and modals in the new style.', tags: ['dev', 'ui'], dueDate: '2026-08-30' });
   createCard({ projectId: site.id, status: 'blocked', title: 'Await client copy', description: 'Blocked on final marketing copy for the landing page.' });

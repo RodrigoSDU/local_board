@@ -96,7 +96,7 @@ function nextCardOrder(projectId, status) {
     .reduce((max, c) => Math.max(max, c.order), -1) + 1;
 }
 
-export function createCard({ projectId, status = 'planned', title, description = '', dueDate = null, tags = [] }) {
+export function createCard({ projectId, status = 'planned', title, description = '', dueDate = null, tags = [], checklist = [] }) {
   const now = new Date().toISOString();
   const card = {
     id: generateId(),
@@ -107,6 +107,7 @@ export function createCard({ projectId, status = 'planned', title, description =
     startDate: now, // set once, never touched again
     dueDate,
     tags,
+    checklist,
     order: nextCardOrder(projectId, status),
     createdAt: now,
     updatedAt: now,
