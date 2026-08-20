@@ -28,19 +28,30 @@ export function formatDate(iso) {
   return d ? dateFmt.format(d) : '';
 }
 
-function isOverdue(dueIso) {
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const SOON_WINDOW_DAYS = 3;
+
+// null (nothing to flag), 'soon' (due today or within SOON_WINDOW_DAYS),
+// or 'overdue' (due date already passed). Also doubles as the CSS class
+// name applied to the due-chip for each tier.
+function dueUrgency(dueIso) {
   const due = parseLocalDate(dueIso);
-  if (!due) return false;
+  if (!due) return null;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return due.getTime() < today.getTime();
+  const daysUntil = Math.round((due.getTime() - today.getTime()) / ONE_DAY_MS);
+  if (daysUntil < 0) return 'overdue';
+  if (daysUntil <= SOON_WINDOW_DAYS) return 'soon';
+  return null;
 }
 
-// Prefixes an alert emoji onto a title when it's overdue -- plain text,
-// same as everything else here, so it stays through textContent with no
-// extra markup.
-function withAlert(text, overdue) {
-  return overdue ? `⚠️ ${text}` : text;
+const URGENCY_EMOJI = { overdue: '⚠️', soon: '⏰' };
+
+// Prefixes an urgency emoji onto a title -- plain text, same as everything
+// else here, so it stays through textContent with no extra markup.
+function withAlert(text, urgency) {
+  const emoji = URGENCY_EMOJI[urgency];
+  return emoji ? `${emoji} ${text}` : text;
 }
 
 const CHEVRON_SVG = '<svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2 4.5l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -73,13 +84,13 @@ function buildCard(card) {
   el.className = `card stage-${card.status}`;
   el.dataset.id = card.id;
 
-  // A finished card doesn't need an overdue warning -- it doesn't matter
-  // anymore that it would have been late.
-  const cardOverdue = card.status !== 'done' && isOverdue(card.dueDate);
+  // A finished card doesn't need an overdue/soon warning -- it doesn't
+  // matter anymore whether it would have been late.
+  const cardUrgency = card.status !== 'done' ? dueUrgency(card.dueDate) : null;
 
   const title = document.createElement('h3');
   title.className = 'card-title';
-  title.textContent = withAlert(card.title, cardOverdue);
+  title.textContent = withAlert(card.title, cardUrgency);
   el.appendChild(title);
 
   if (card.description) {
@@ -113,7 +124,7 @@ function buildCard(card) {
   meta.appendChild(start);
   if (card.dueDate) {
     const due = document.createElement('span');
-    due.className = 'due-chip small' + (cardOverdue ? ' overdue' : '');
+    due.className = 'due-chip small' + (cardUrgency ? ` ${cardUrgency}` : '');
     due.textContent = `Due ${formatDate(card.dueDate)}`;
     meta.appendChild(due);
   }
@@ -155,7 +166,7 @@ function buildStackChip(card) {
   el.dataset.id = card.id;
   const title = document.createElement('span');
   title.className = 'card-title';
-  title.textContent = withAlert(card.title, card.status !== 'done' && isOverdue(card.dueDate));
+  title.textContent = withAlert(card.title, card.status !== 'done' ? dueUrgency(card.dueDate) : null);
   el.appendChild(title);
   return el;
 }
@@ -217,18 +228,18 @@ function buildProjectRow(project) {
   collapseBtn.innerHTML = CHEVRON_SVG;
   header.appendChild(collapseBtn);
 
-  const projectOverdue = isOverdue(project.dueDate);
+  const projectUrgency = dueUrgency(project.dueDate);
 
   const name = document.createElement('span');
   name.className = 'project-name';
-  name.textContent = withAlert(project.name, projectOverdue);
+  name.textContent = withAlert(project.name, projectUrgency);
   header.appendChild(name);
 
   header.appendChild(buildPriorityDots(project.priority));
 
   if (project.dueDate) {
     const due = document.createElement('span');
-    due.className = 'due-chip' + (projectOverdue ? ' overdue' : '');
+    due.className = 'due-chip' + (projectUrgency ? ` ${projectUrgency}` : '');
     due.textContent = `Due ${formatDate(project.dueDate)}`;
     header.appendChild(due);
   }
