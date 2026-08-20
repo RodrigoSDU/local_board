@@ -4,7 +4,7 @@
 // markup. The two innerHTML uses below are fixed, hardcoded icon strings
 // with no user input in them.
 
-import { getProjects, getCardsForCell, getCardsForProject, STAGES } from './state.js';
+import { getProjects, getCardsForCell, STAGES } from './state.js';
 
 const projectListEl = document.getElementById('project-list');
 const emptyStateEl = document.getElementById('empty-state');
@@ -146,31 +146,43 @@ function buildStackChip(card) {
   return el;
 }
 
+// Cards beyond this just add to the count badge -- the pile itself never
+// grows past 3 deep, so a column with 20 cards looks the same size as one
+// with 4.
+const STACK_VISIBLE_CAP = 3;
+
 function buildCollapsedStack(project) {
   const wrap = document.createElement('div');
   wrap.className = 'project-row-stack';
 
-  const pile = document.createElement('div');
-  pile.className = 'cell stack-pile';
-  pile.dataset.projectId = project.id;
-  pile.dataset.stage = 'planned';
+  for (const stage of STAGES) {
+    const cards = getCardsForCell(project.id, stage.key);
 
-  const cards = getCardsForProject(project.id);
-  const FAN_CAP = 5; // additional cards beyond this just stack directly behind, no extra spread
-  cards.forEach((card, i) => {
-    const chip = buildStackChip(card);
-    const offset = Math.min(i, FAN_CAP);
-    const rotate = offset === 0 ? 0 : (offset % 2 === 0 ? 1 : -1) * offset * 0.7;
-    chip.style.transform = `translate(${offset * 4}px, ${offset * 6}px) rotate(${rotate}deg)`;
-    chip.style.zIndex = String(cards.length - i);
-    pile.appendChild(chip);
-  });
-  wrap.appendChild(pile);
+    const cell = document.createElement('div');
+    cell.className = 'cell stack-cell';
+    cell.dataset.projectId = project.id;
+    cell.dataset.stage = stage.key;
 
-  const badge = document.createElement('span');
-  badge.className = 'stack-badge';
-  badge.textContent = cards.length === 1 ? '1 card' : `${cards.length} cards`;
-  wrap.appendChild(badge);
+    if (cards.length) {
+      const pile = document.createElement('div');
+      pile.className = 'stack-pile';
+      const visible = cards.slice(0, STACK_VISIBLE_CAP);
+      visible.forEach((card, i) => {
+        const chip = buildStackChip(card);
+        chip.style.transform = `translateY(${i * 6}px)`; // straight vertical peek, no rotation
+        chip.style.zIndex = String(visible.length - i);
+        pile.appendChild(chip);
+      });
+      cell.appendChild(pile);
+
+      const badge = document.createElement('span');
+      badge.className = 'stack-badge';
+      badge.textContent = cards.length === 1 ? '1 card' : `${cards.length} cards`;
+      cell.appendChild(badge);
+    }
+
+    wrap.appendChild(cell);
+  }
 
   return wrap;
 }

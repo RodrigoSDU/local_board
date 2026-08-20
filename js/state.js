@@ -84,12 +84,6 @@ export function getCardsForCell(projectId, status) {
     .sort((a, b) => a.order - b.order);
 }
 
-// All of a project's cards regardless of stage -- used by the collapsed
-// stacked view, which aggregates across all four columns.
-export function getCardsForProject(projectId) {
-  return STAGES.flatMap(stage => getCardsForCell(projectId, stage.key));
-}
-
 function nextCardOrder(projectId, status) {
   return cards
     .filter(c => c.projectId === projectId && c.status === status)
