@@ -5,14 +5,20 @@
 // near-identical copies that drifted out of sync. Both pointercancel and
 // setPointerCapture are handled here, two gaps that app's version had.
 //
-// Mouse and touch/pen use different start gestures on purpose. A mouse
-// drag begins as soon as the pointer moves past a small threshold -- the
-// normal desktop feel, since there's no competing scroll gesture to
-// disambiguate against. Touch/pen require a short press-and-hold with an
-// early-movement cancel, so an ordinary scroll swipe across a card is left
-// alone rather than hijacked into a drag. Neither path sets touch-action
-// on the card: leaving it at the default is what lets a fast swipe cancel
-// the pending hold below before any drag-only preventDefault() runs.
+// Mouse/pen and touch use different start gestures on purpose. A mouse or
+// pen drag begins as soon as the pointer moves past a small threshold --
+// the normal desktop feel, since neither has a competing scroll gesture to
+// disambiguate against (an Apple Pencil dragging across a webpage doesn't
+// scroll it the way a finger swipe does). Touch alone requires a short
+// press-and-hold with an early-movement cancel, so an ordinary scroll
+// swipe across a card is left alone rather than hijacked into a drag.
+// Pen deliberately isn't lumped in with touch here: a stylus has far less
+// natural hand-stabilization than a fingertip, so requiring it to hold
+// still for HOLD_MS made the gesture unreliable -- the slightest drift
+// during the hold window cancelled it before it ever started. Neither
+// path sets touch-action on the card: leaving it at the default is what
+// lets a fast touch swipe cancel the pending hold below before any
+// drag-only preventDefault() runs.
 
 const HOLD_MS = 200;
 const MOVE_THRESHOLD_PX = 6;
@@ -29,7 +35,7 @@ export function initDragAndDrop({ container, onDrop }) {
 
 function beginPress(downEvent, cardEl, onDrop) {
   const pointerId = downEvent.pointerId;
-  const isTouch = downEvent.pointerType !== 'mouse';
+  const requiresHold = downEvent.pointerType === 'touch';
   const startX = downEvent.clientX;
   const startY = downEvent.clientY;
   let settled = false;
@@ -46,7 +52,7 @@ function beginPress(downEvent, cardEl, onDrop) {
     if (e.pointerId !== pointerId || settled) return;
     const moved = Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY);
     if (moved <= MOVE_THRESHOLD_PX) return;
-    if (isTouch) {
+    if (requiresHold) {
       cleanup(); // treat as a scroll swipe, not a drag
     } else {
       cleanup();
@@ -59,7 +65,7 @@ function beginPress(downEvent, cardEl, onDrop) {
     cleanup(); // plain tap/click -- let the native click event fire
   }
 
-  const timer = isTouch
+  const timer = requiresHold
     ? setTimeout(() => {
         cleanup();
         startDrag(downEvent, cardEl, pointerId, onDrop);
