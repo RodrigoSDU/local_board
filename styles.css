@@ -62,9 +62,9 @@ button { font-family: inherit; }
 }
 
 .app-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  color: var(--accent);
 }
 
 .icon-btn {
@@ -131,7 +131,7 @@ button { font-family: inherit; }
   padding: 16px 20px 60px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .project-row {
