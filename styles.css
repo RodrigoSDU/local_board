@@ -597,6 +597,17 @@ button { font-family: inherit; }
 }
 .settings-actions-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
+.theme-picker { display: flex; gap: 4px; }
+.theme-btn {
+  flex: 1; height: 34px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); color: var(--muted);
+  font-size: 0.85rem; font-weight: 600; font-family: inherit; cursor: pointer;
+  transition: all 0.15s;
+}
+.theme-btn:hover { border-color: var(--accent); }
+.theme-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+
 /* ── Future dark mode ─────────────────────────────────────────
    Scaffolding only -- both blocks are structurally ready but empty,
    so shipping dark mode later means filling in token values here,
@@ -611,10 +622,42 @@ button { font-family: inherit; }
      on <html>), and wins even if the OS preference is light. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    /* --bg: ...; --surface: ...; --text: ...; etc. */
+    --bg: #14161b;
+    --surface: #1c1f26;
+    --surface-alt: #23262f;
+    --border: #333844;
+    --text: #e7e9ee;
+    --muted: #8b90a0;
+    --accent: #6366f1;
+    --accent-dim: rgba(99, 102, 241, 0.18);
+    --danger: #f87171;
+    --warning: #fb923c;
+
+    --stage-planned: #60a5fa;
+    --stage-in_progress: #facc15;
+    --stage-blocked: #f87171;
+    --stage-done: #4ade80;
+
+    color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  /* --bg: ...; --surface: ...; --text: ...; etc. */
+  --bg: #14161b;
+  --surface: #1c1f26;
+  --surface-alt: #23262f;
+  --border: #333844;
+  --text: #e7e9ee;
+  --muted: #8b90a0;
+  --accent: #6366f1;
+  --accent-dim: rgba(99, 102, 241, 0.18);
+  --danger: #f87171;
+  --warning: #fb923c;
+
+  --stage-planned: #60a5fa;
+  --stage-in_progress: #facc15;
+  --stage-blocked: #f87171;
+  --stage-done: #4ade80;
+
+  color-scheme: dark;
 }

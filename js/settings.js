@@ -3,7 +3,7 @@
 // the flows that open the project modal always close settings first.
 
 import { init as reinitState, getProject, createProject, updateProject, deleteProject } from './state.js';
-import { exportData, importData } from './storage.js';
+import { exportData, importData, loadSettings, saveSettings } from './storage.js';
 import { render } from './render.js';
 
 const PALETTE = ['#3b82f6', '#f97316', '#22c55e', '#ef4444', '#a855f7', '#eab308', '#14b8a6', '#ec4899'];
@@ -20,6 +20,7 @@ const newProjectBtn = document.getElementById('new-project-btn');
 const exportBtn = document.getElementById('export-btn');
 const importBtn = document.getElementById('import-btn');
 const importFileInput = document.getElementById('import-file');
+const themePicker = document.getElementById('theme-picker');
 
 const projectModalTitle = document.getElementById('project-modal-title');
 const projectModalClose = document.getElementById('project-modal-close');
@@ -64,6 +65,36 @@ priorityPicker.addEventListener('click', e => {
   const btn = e.target.closest('.priority-btn');
   if (btn) selectPriority(Number(btn.dataset.value));
 });
+
+// ── Theme ────────────────────────────────────────────────────
+// 'system' means no explicit override -- remove the attribute and let the
+// prefers-color-scheme media query in styles.css decide on its own.
+function applyTheme(theme) {
+  const root = document.documentElement;
+  if (theme === 'light' || theme === 'dark') {
+    root.setAttribute('data-theme', theme);
+  } else {
+    root.removeAttribute('data-theme');
+  }
+  for (const btn of themePicker.querySelectorAll('.theme-btn')) {
+    btn.classList.toggle('active', btn.dataset.theme === theme);
+  }
+}
+
+themePicker.addEventListener('click', e => {
+  const btn = e.target.closest('.theme-btn');
+  if (!btn) return;
+  const theme = btn.dataset.theme;
+  saveSettings({ ...loadSettings(), theme });
+  applyTheme(theme);
+});
+
+// The inline script in index.html's <head> already set data-theme before
+// first paint for an explicit light/dark choice; this call is what syncs
+// the picker's own active-button state, and is a harmless no-op re-set of
+// the attribute otherwise (including for 'system', where it just confirms
+// the attribute is absent).
+applyTheme(loadSettings().theme);
 
 // ── Open/close ───────────────────────────────────────────────
 function openBackdrop() { backdrop.classList.add('open'); }

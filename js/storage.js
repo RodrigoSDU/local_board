@@ -8,7 +8,7 @@ const KEYS = {
 };
 
 const DEFAULT_SETTINGS = {
-  theme: 'light',
+  theme: 'system', // 'system' | 'light' | 'dark'
   seeded: false, // whether the first-run sample projects have ever been created
 };
 

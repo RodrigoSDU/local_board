@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Board</title>
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Applies an explicit light/dark override before first paint, so there's
+    // no flash of the wrong theme while js/main.js (a deferred module) loads.
+    // 'system' needs no JS at all -- the CSS media query in styles.css
+    // handles it on its own. Kept in sync by hand with storage.js's
+    // pb_settings/theme shape; this has to be a plain synchronous script,
+    // not a module import, to run before anything renders.
+    (function () {
+      try {
+        var settings = JSON.parse(localStorage.getItem('pb_settings') || '{}');
+        if (settings.theme === 'light' || settings.theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', settings.theme);
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <header class="app-header">
@@ -45,6 +61,14 @@
       <button class="modal-close-btn" id="settings-close" aria-label="Close">&times;</button>
     </div>
     <div class="modal-body">
+      <section class="settings-section">
+        <h3 class="settings-section-title">Appearance</h3>
+        <div class="theme-picker" id="theme-picker" role="group" aria-label="Theme">
+          <button type="button" class="theme-btn" data-theme="system">System</button>
+          <button type="button" class="theme-btn" data-theme="light">Light</button>
+          <button type="button" class="theme-btn" data-theme="dark">Dark</button>
+        </div>
+      </section>
       <section class="settings-section">
         <h3 class="settings-section-title">Projects</h3>
         <button class="btn-primary" id="new-project-btn">+ New Project</button>
